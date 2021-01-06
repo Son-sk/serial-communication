@@ -2,10 +2,11 @@
 # -*- coding: cp949 -*-
 import serial
 import chardet
-def read_rx() : #온도조절기 송신, Wi-Fi Module 수신
-    ser = serial.Serial(port='COM5', baudrate = 19200)
+def read_rx(port_num) : #port No. #Print Port name
+    ser = serial.Serial(port=port_num, baudrate = 19200)
     #datalist = []
     datachar = ''
+    port_name = ''
 
     max_val=0
     max_len=0
@@ -43,8 +44,12 @@ def read_rx() : #온도조절기 송신, Wi-Fi Module 수신
                 if data_decode == '\r' :
                     # for j in range(int(len(datalist))) :
                     #     datachar += datalist[j]
+                    if datachar == 'AT+NETWORK5E' :
+                        port_name = 'MCU: '
+                    elif datachar == 'AT+NETOK5B' :
+                        port_name = 'Module: '
                     datachar += '\r'
-                    print ("MCU: "+datachar)
+                    print (port_name+datachar)
 
                     datachar_split = datachar.split('"')
                     #print (datachar_split)
@@ -55,12 +60,12 @@ def read_rx() : #온도조절기 송신, Wi-Fi Module 수신
                                 max_len = i
 
                         if int(len(datachar_split[max_len])) > 50 :
-                            print("-------------------------------")
+                            
 
                             mqtt_data_r = datachar_split[max_len]
 
                             if mqtt_data_re != mqtt_data_r :
-                        
+                                print("-------------------------------")
                                 if mqtt_data_re != 0 : 
                                     i=0
                                     while i < int(len(mqtt_data_r)) :
@@ -205,7 +210,7 @@ def read_rx() : #온도조절기 송신, Wi-Fi Module 수신
                                                     
                                                     pat4_hour.sort()
                                                     pat5_hour.sort()
-                                                    print("P4 :")
+                                                    print("P4:")
                                                     print(pat4_hour)
                                                     print("P5: ")
                                                     print(pat5_hour)
