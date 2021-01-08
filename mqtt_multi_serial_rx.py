@@ -2,6 +2,27 @@
 # -*- coding: cp949 -*-
 import serial
 import chardet
+import csv, datetime
+
+# year = datetime.datetime.now().year
+# month = datetime.datetime.now().month
+# day = datetime.datetime.now().day
+
+today = datetime.datetime.now()
+csv_filename = today.strftime("%Y%m%d")+'.csv'
+
+def file_output_csv(name, value) :  #csv file output function
+    file = open(csv_filename,'a', newline='') 
+    wr = csv.writer(file)
+    
+    wr.writerow([datetime.datetime.now(),"INF" ,name, str(value)])
+
+def file_output_serial_csv(data1, data2) :  #csv file output function
+    file = open(csv_filename,'a', newline='') 
+    wr = csv.writer(file)
+    
+    wr.writerow([datetime.datetime.now(), data1, data2])
+
 def read_rx(port_num) : #port No. #Print Port name
     ser = serial.Serial(port=port_num, baudrate = 19200)
     #datalist = []
@@ -48,7 +69,10 @@ def read_rx(port_num) : #port No. #Print Port name
                         port_name = 'MCU: '
                     elif datachar == 'AT+NETOK5B' :
                         port_name = 'Module: '
+
+                    file_output_serial_csv (port_name, datachar)
                     datachar += '\r'
+
                     print (port_name+datachar)
 
                     datachar_split = datachar.split('"')
@@ -104,59 +128,59 @@ def read_rx(port_num) : #port No. #Print Port name
                                             if int_change_data in mqtt_data_print_exception :
                                                 if int_mqtt_data  == 0 and int_change_data == 7 : # flow mode or indoor mode
                                                     print(mqtt_data_print_state["flow"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["flow"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["flow"])
                                                 elif int_mqtt_data  == 1 and int_change_data == 7 :
                                                     print(mqtt_data_print_state["indoor"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["indoor"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["indoor"])
 
                                                 if int_mqtt_data  == 0 and int_change_data == 20 : # heating mode : auto/save
                                                     print("Mode: "+mqtt_data_print_state["off"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
                                                 elif int_mqtt_data  == 1 and int_change_data == 20 :
                                                     print(mqtt_data_print_state["save"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["save"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["save"])
                                                 elif int_mqtt_data  == 2 and int_change_data == 20 :
                                                     print(mqtt_data_print_state["auto"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["auto"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["auto"])
 
                                                 if int_mqtt_data  == 0 and int_change_data in mqtt_data_sw_on_off_info : #SW operation info
                                                     pass
                                                 elif int_mqtt_data  == 1 and int_change_data in mqtt_data_sw_on_off_info  :
                                                     print(mqtt_data_print_no[j]+": "+mqtt_data_print_state["on"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["on"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["on"])
                                                 elif int_mqtt_data  == 2 and int_change_data in mqtt_data_sw_on_off_info  :
                                                     print(mqtt_data_print_no[j]+": "+mqtt_data_print_state["off"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
 
                                                 if int_mqtt_data  == 0 and int_change_data == 28 : #SW operation info_ heat mode auto/save
                                                     pass
                                                 elif int_mqtt_data  == 1 and int_change_data == 28 : 
                                                     print(mqtt_data_print_no[j]+"SAVE: "+mqtt_data_print_state["on"])
-                                                    #file_output_csv(mqtt_data_print_no[j]+" SAVE", mqtt_data_print_state["on"])
+                                                    file_output_csv(mqtt_data_print_no[j]+" SAVE", mqtt_data_print_state["on"])
                                                 elif int_mqtt_data  == 2 and int_change_data == 28 :
                                                     print(mqtt_data_print_no[j]+"SAVE: "+mqtt_data_print_state["off"])
-                                                    #file_output_csv(mqtt_data_print_no[j]+" SAVE", mqtt_data_print_state["off"])
+                                                    file_output_csv(mqtt_data_print_no[j]+" SAVE", mqtt_data_print_state["off"])
                                                 elif int_mqtt_data  == 3 and int_change_data == 28 :
                                                     print(mqtt_data_print_no[j]+"AUTO: "+mqtt_data_print_state["on"])
-                                                    #file_output_csv(mqtt_data_print_no[j]+" AUTO", mqtt_data_print_state["on"])
+                                                    file_output_csv(mqtt_data_print_no[j]+" AUTO", mqtt_data_print_state["on"])
                                                 elif int_mqtt_data  == 4 and int_change_data == 28 :
                                                     print(mqtt_data_print_no[j]+"AUTO: "+mqtt_data_print_state["off"])
-                                                    #file_output_csv(mqtt_data_print_no[j]+" AUTO", mqtt_data_print_state["off"])
+                                                    file_output_csv(mqtt_data_print_no[j]+" AUTO", mqtt_data_print_state["off"])
 
                                                 if int_mqtt_data  == 0 and int_change_data == 41 :
                                                     print(mqtt_data_print_no[j]+": "+mqtt_data_print_state["m3"]) #gas info
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["m3"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["m3"])
                                                 elif int_mqtt_data  == 1 and int_change_data == 41 :
                                                     print(mqtt_data_print_no[j]+": "+mqtt_data_print_state["kg"])
-                                                    #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["kg"])
+                                                    file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["kg"])
 
                                             elif int_mqtt_data == 0 :
                                                 print(mqtt_data_print_no[j] +": "+mqtt_data_print_state["off"]) 
-                                                #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
+                                                file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["off"])
 
                                             elif int_mqtt_data  == 1 and int_change_data != 35 : 
                                                 print(mqtt_data_print_no[j] +": "+mqtt_data_print_state["on"])
-                                                #file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["on"])
+                                                file_output_csv(mqtt_data_print_no[j], mqtt_data_print_state["on"])
 
                                             else : #예약DATA를 시간으로 표시
                                                 if int_change_data == 36 : # Hex data No. (Reservation info-24H 4-5P)
@@ -166,6 +190,9 @@ def read_rx(port_num) : #port No. #Print Port name
                                                     pat4 = mqtt_rpc_inf_new[int(change_data[i])][0:6]
                                                     pat5 = mqtt_rpc_inf_new[int(change_data[i])][6:12]
                                                     print(mqtt_data_print_no[j] +": P4->"+pat4+", "+"P5->"+pat5)
+
+                                                    file_output_csv(mqtt_data_print_no[j], "P4: "+pat4)
+                                                    file_output_csv(mqtt_data_print_no[j], "P5: "+pat5)
 
                                                     bin_pat4 = bin(int(pat4,16))
                                                     bin_pat5 = bin(int(pat5,16))
@@ -214,17 +241,22 @@ def read_rx(port_num) : #port No. #Print Port name
                                                     print(pat4_hour)
                                                     print("P5: ")
                                                     print(pat5_hour)
+                                                    pat4_hour_list = ''.join(str(pat4_hour))
+                                                    pat5_hour_list = ''.join(str(pat5_hour))
+                                                    file_output_csv(mqtt_data_print_no[j], "P4: "+pat4_hour_list)
+                                                    file_output_csv(mqtt_data_print_no[j], "P5: "+pat5_hour_list)
+                                                    
 
-                                                    #file_output_csv(mqtt_data_print_no[j], hex_mqtt_data)
+                                                    
 
                                                 elif int_change_data == 17 : # Hex data No. (Error)
                                                     hex_mqtt_data = hex(int_mqtt_data)
                                                     print(mqtt_data_print_no[j] +": "+str(hex_mqtt_data))
-                                                    #file_output_csv(mqtt_data_print_no[j], hex_mqtt_data)
+                                                    file_output_csv(mqtt_data_print_no[j], hex_mqtt_data)
 
                                                 else : #Dec data No.
                                                     print(mqtt_data_print_no[j] +": "+str(int_mqtt_data))
-                                                    #file_output_csv(mqtt_data_print_no[j], int_mqtt_data)
+                                                    file_output_csv(mqtt_data_print_no[j], int_mqtt_data)
                                         j+=1
 
                                     i+=1
