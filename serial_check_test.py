@@ -50,6 +50,7 @@ def serial_check_enable() :
             elif usb_string in check_desc[i] :
                 port2 = check_port[i]
         i+=1
+
     if port1 != 'none' :
         print("Available PORT1 : "+str(port1)+" (Automatic connection)")
     else :
@@ -61,4 +62,9 @@ def serial_check_enable() :
         print("Not available PORT2")
 
     return port1, port2
+
+port1, port2 = serial_check_enable()
+
+
+
 
