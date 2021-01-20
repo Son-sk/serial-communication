@@ -65,6 +65,5 @@ def serial_check_enable() :
 
 port1, port2 = serial_check_enable()
 
-
-
+#print(serial_check_enable())
 
